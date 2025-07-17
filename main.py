@@ -57,7 +57,7 @@ PERMISSIONS = {
 }
 
 # Pydantic Models
-class UserLogin(BaseModel):
+ass UserLogin(BaseModel):
     empid: str
     password: str
 
