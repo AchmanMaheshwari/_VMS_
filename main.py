@@ -57,7 +57,7 @@ PERMISSIONS = {
 }
 
 # Pydantic Models
-ass UserLogin(BaseModel):
+class UserLogin(BaseModel):
     empid: str
     password: str
 
@@ -231,31 +231,20 @@ async def create_user(user_data: UserCreate, current_user: dict = Depends(requir
     cursor = conn.cursor()
     
     try:
-        # Check if employee ID already exists
+        # Check if user already exists
         cursor.execute("SELECT COUNT(*) FROM users WHERE empid = %s", (user_data.empid.upper(),))
         if cursor.fetchone()[0] > 0:
             raise HTTPException(status_code=400, detail="Employee ID already exists")
-
-        # ✅ Fixed: check using correct column name
-        cursor.execute("SELECT COUNT(*) FROM users WHERE emp_mobile_no = %s", (user_data.emp_mobile_no,))
-        if cursor.fetchone()[0] > 0:
-            raise HTTPException(status_code=400, detail="Mobile number already exists")
-
+        
         hashed_password = hash_password(user_data.password)
-
+        
         cursor.execute("""
             INSERT INTO users (empid, empname, emp_mobile_no, password_hash, user_role, created_by, created_date)
             VALUES (%s, %s, %s, %s, %s, %s, NOW())
-        """, (
-            user_data.empid.upper(),
-            user_data.empname,
-            user_data.emp_mobile_no,
-            hashed_password,
-            user_data.user_role,
-            current_user['empid']
-        ))
-
+        """, (user_data.empid.upper(), user_data.empname, user_data.emp_mobile_no, 
+              hashed_password, user_data.user_role, current_user['empid']))
         conn.commit()
+        
         return ApiResponse(success=True, message="User created successfully")
     finally:
         cursor.close()
@@ -373,25 +362,6 @@ async def get_master_data(table_name: str, current_user: dict = Depends(get_curr
         results = [row[0] for row in cursor.fetchall()]
         
         return ApiResponse(success=True, message="Master data retrieved successfully", data=results)
-    finally:
-        cursor.close()
-        conn.close()
-
-@app.get("/api/users/host_lookup")
-async def host_lookup(number: str):
-    db = VMSDatabase()
-    conn = db.get_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("""
-            SELECT empid, empname FROM users
-            WHERE empid = %s OR emp_mobile_no = %s
-        """, (number, number))
-        result = cursor.fetchone()
-        if result:
-            return {"found": True, "empid": result[0], "empname": result[1]}
-        else:
-            return {"found": False}
     finally:
         cursor.close()
         conn.close()
