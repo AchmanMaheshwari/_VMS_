@@ -30,10 +30,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Database Configuration
 DB_CONFIG = {
-    'host': 'metro.proxy.rlwy.net',
+    'host': 'localhost',
     'user': 'root',
-    'password': 'vkSILBLQSwXGfVBCgjdTultaYtUcxVJq',
-    'database': 'railway'
+    'password': 'Tiger',
+    'database': 'vms_system'
 }
 
 
