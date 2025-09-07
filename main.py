@@ -30,10 +30,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Database Configuration
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'Tiger',
-    'database': 'vms_system'
+    'host': os.getenv("DB_HOST", "metro.proxy.rlwy.net"),
+    'user': os.getenv("DB_USER", "root"),
+    'password': os.getenv("DB_PASSWORD", "My_pass"),
+    'database': os.getenv("DB_NAME", "railway"),
+    'port': int(os.getenv("DB_PORT", "28600"))
 }
 
 
