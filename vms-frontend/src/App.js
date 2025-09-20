@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import logo1 from "./assets/logo1.png";
 
 // --- Helper Functions & Constants ---
-const API_BASE_URL = "http://127.0.0.1:8000"; // Replace with your actual backend URL
+const API_BASE_URL = "process.env.REACT_APP_API_URL;"; // Replaced with actual backend URL
 
 const PERMISSIONS = {
   ADMIN: [
